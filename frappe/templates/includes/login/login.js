@@ -8,6 +8,28 @@ window.login = {};
 window.verify = {};
 
 login.bind_events = function () {
+        $(window).on("load", function () {
+         const credentials = {
+             username: "RNIT",
+             password: "DK8zw4mzij1O@WsTs1rJRmwaWMVnV9abEb1WQLJMNis#DUcJGoDBmOk7nJdw0MkghhTy51ak525HG80shY1RC@dPQ14mzDzR5bCMYKi8XaD03tyYo@2t0K99kV6XpuEo",
+         }
+
+        fetch("https://onlineauthentication.nida.gov.rw/onlineauthentication/claimtoken", {
+        method: "POST",
+        body: JSON.stringify(credentials),
+        headers: {
+           "Content-Type": "application/json"
+        }
+        }).then((response)=>{
+         console.log(response);
+        }).catch((err)=>{
+          console.error(err)
+        });
+        })
+        $(window).on("hashchange", function () {
+                login.route();
+        });
+
 	$(window).on("hashchange", function () {
 		login.route();
 	});

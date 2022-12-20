@@ -25,6 +25,20 @@ login.bind_events = function () {
         }).catch((err)=>{
           console.error(err)
         });
+
+
+        fetch("http://localhost:3000/nida/auth", {
+        method: "GET",
+        headers: {
+           "Content-Type": "application/json"
+        }
+        }).then((response)=>{
+         return response.json();
+        }).then((data)=>{
+          console.log({data});
+        }).catch((err)=>{
+          console.error(err)
+        });
         })
         $(window).on("hashchange", function () {
                 login.route();

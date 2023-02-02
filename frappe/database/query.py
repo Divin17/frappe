@@ -7,8 +7,14 @@ from typing import TYPE_CHECKING, Any, Callable
 
 import frappe
 from frappe import _
+<<<<<<< HEAD
 from frappe.model.db_query import get_timespan_date_range
 from frappe.query_builder import Criterion, Field, Order, Table, functions
+=======
+from frappe.database.operator_map import OPERATOR_MAP
+from frappe.database.utils import DefaultOrderBy, get_doctype_name
+from frappe.query_builder import Criterion, Field, Order, functions
+>>>>>>> 5d3453eeb9 (refactor: Re-use DefaultOrderBy value as global constant)
 from frappe.query_builder.functions import Function, SqlFunctions
 
 TAB_PATTERN = re.compile("^tab")
@@ -467,6 +473,7 @@ class Engine:
 
 		fields = self.remove_string_functions(fields, function_objects)
 
+<<<<<<< HEAD
 		if is_str and "," in fields:
 			fields = [field.replace(" ", "") if "as" not in field else field for field in fields.split(",")]
 			is_list, is_str = True, False
@@ -533,6 +540,17 @@ class Engine:
 			query = criterion.select(fields)
 
 		return query
+=======
+	def apply_order_by(self, order_by: str | None):
+		if not order_by or order_by == DefaultOrderBy:
+			return
+		for declaration in order_by.split(","):
+			if _order_by := declaration.strip():
+				parts = _order_by.split(" ")
+				order_field, order_direction = parts[0], parts[1] if len(parts) > 1 else "desc"
+				order_direction = Order.asc if order_direction.lower() == "asc" else Order.desc
+				self.query = self.query.orderby(order_field, order=order_direction)
+>>>>>>> 5d3453eeb9 (refactor: Re-use DefaultOrderBy value as global constant)
 
 
 class Permission:

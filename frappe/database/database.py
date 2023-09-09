@@ -40,7 +40,7 @@ class Database(object):
 	STANDARD_VARCHAR_COLUMNS = ('name', 'owner', 'modified_by')
 	DEFAULT_COLUMNS = ['name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'idx']
 	CHILD_TABLE_COLUMNS = ('parent', 'parenttype', 'parentfield')
-	MAX_WRITES_PER_TRANSACTION = 200_000
+	MAX_WRITES_PER_TRANSACTION = 111200_000
 
 	class InvalidColumnName(frappe.ValidationError): pass
 

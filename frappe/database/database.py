@@ -874,281 +874,324 @@ class Database(object):
 				SELECT table_name
 				FROM information_schema.tables
 				WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
-			""")
-			tables = {d[0] for d in table_rows}
-			frappe.cache().set_value('db_tables', tables)
-		return tables
+			"""
+            )
+            tables = {d[0] for d in table_rows}
+            frappe.cache().set_value("db_tables", tables)
+        return tables
 
-	def a_row_exists(self, doctype):
-		"""Returns True if atleast one row exists."""
-		return self.sql("select name from `tab{doctype}` limit 1".format(doctype=doctype))
+    def a_row_exists(self, doctype):
+        """Returns True if atleast one row exists."""
+        return self.sql(
+            "select name from `tab{doctype}` limit 1".format(doctype=doctype)
+        )
 
-	def exists(self, dt, dn=None, cache=False):
-		"""Returns true if document exists.
+    def exists(self, dt, dn=None, cache=False):
+        """Returns true if document exists.
 
-		:param dt: DocType name.
-		:param dn: Document name or filter dict."""
-		if isinstance(dt, str):
-			if dt!="DocType" and dt==dn:
-				return True # single always exists (!)
-			try:
-				return self.get_value(dt, dn, "name", cache=cache)
-			except Exception:
-				return None
+        :param dt: DocType name.
+        :param dn: Document name or filter dict."""
+        if isinstance(dt, str):
+            if dt != "DocType" and dt == dn:
+                return True  # single always exists (!)
+            try:
+                return self.get_value(dt, dn, "name", cache=cache)
+            except Exception:
+                return None
 
-		elif isinstance(dt, dict) and dt.get('doctype'):
-			try:
-				conditions = []
-				for d in dt:
-					if d == 'doctype': continue
-					conditions.append([d, '=', dt[d]])
-				return self.get_all(dt['doctype'], filters=conditions, as_list=1)
-			except Exception:
-				return None
+        elif isinstance(dt, dict) and dt.get("doctype"):
+            try:
+                conditions = []
+                for d in dt:
+                    if d == "doctype":
+                        continue
+                    conditions.append([d, "=", dt[d]])
+                return self.get_all(dt["doctype"], filters=conditions, as_list=1)
+            except Exception:
+                return None
 
-	def count(self, dt, filters=None, debug=False, cache=False):
-		"""Returns `COUNT(*)` for given DocType and filters."""
-		if cache and not filters:
-			cache_count = frappe.cache().get_value('doctype:count:{}'.format(dt))
-			if cache_count is not None:
-				return cache_count
-		query = self.query.get_sql(table=dt, filters=filters, fields=Count("*"))
-		if filters:
-			count = self.sql(query, debug=debug)[0][0]
-			return count
-		else:
-			count = self.sql(query, debug=debug)[0][0]
-			if cache:
-				frappe.cache().set_value('doctype:count:{}'.format(dt), count, expires_in_sec = 86400)
-			return count
+    def count(self, dt, filters=None, debug=False, cache=False):
+        """Returns `COUNT(*)` for given DocType and filters."""
+        if cache and not filters:
+            cache_count = frappe.cache().get_value("doctype:count:{}".format(dt))
+            if cache_count is not None:
+                return cache_count
+        query = self.query.get_sql(table=dt, filters=filters, fields=Count("*"))
+        if filters:
+            count = self.sql(query, debug=debug)[0][0]
+            return count
+        else:
+            count = self.sql(query, debug=debug)[0][0]
+            if cache:
+                frappe.cache().set_value(
+                    "doctype:count:{}".format(dt), count, expires_in_sec=86400
+                )
+            return count
 
-	@staticmethod
-	def format_date(date):
-		return getdate(date).strftime("%Y-%m-%d")
+    @staticmethod
+    def format_date(date):
+        return getdate(date).strftime("%Y-%m-%d")
 
-	@staticmethod
-	def format_datetime(datetime):
-		if not datetime:
-			return '0001-01-01 00:00:00.000000'
+    @staticmethod
+    def format_datetime(datetime):
+        if not datetime:
+            return "0001-01-01 00:00:00.000000"
 
-		if isinstance(datetime, str):
-			if ':' not in datetime:
-				datetime = datetime + ' 00:00:00.000000'
-		else:
-			datetime = datetime.strftime("%Y-%m-%d %H:%M:%S.%f")
+        if isinstance(datetime, str):
+            if ":" not in datetime:
+                datetime = datetime + " 00:00:00.000000"
+        else:
+            datetime = datetime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-		return datetime
+        return datetime
 
-	def get_creation_count(self, doctype, minutes):
-		"""Get count of records created in the last x minutes"""
-		from frappe.utils import now_datetime
-		from dateutil.relativedelta import relativedelta
+    def get_creation_count(self, doctype, minutes):
+        """Get count of records created in the last x minutes"""
+        from frappe.utils import now_datetime
+        from dateutil.relativedelta import relativedelta
 
-		return self.sql("""select count(name) from `tab{doctype}`
-			where creation >= %s""".format(doctype=doctype),
-			now_datetime() - relativedelta(minutes=minutes))[0][0]
+        return self.sql(
+            """select count(name) from `tab{doctype}`
+			where creation >= %s""".format(
+                doctype=doctype
+            ),
+            now_datetime() - relativedelta(minutes=minutes),
+        )[0][0]
 
-	def get_db_table_columns(self, table):
-		"""Returns list of column names from given table."""
-		columns = frappe.cache().hget('table_columns', table)
-		if columns is None:
-			columns = [r[0] for r in self.sql('''
+    def get_db_table_columns(self, table):
+        """Returns list of column names from given table."""
+        columns = frappe.cache().hget("table_columns", table)
+        if columns is None:
+            columns = [
+                r[0]
+                for r in self.sql(
+                    """
 				select column_name
 				from information_schema.columns
-				where table_name = %s ''', table)]
+				where table_name = %s """,
+                    table,
+                )
+            ]
 
-			if columns:
-				frappe.cache().hset('table_columns', table, columns)
+            if columns:
+                frappe.cache().hset("table_columns", table, columns)
 
-		return columns
+        return columns
 
-	def get_table_columns(self, doctype):
-		"""Returns list of column names from given doctype."""
-		columns = self.get_db_table_columns('tab' + doctype)
-		if not columns:
-			raise self.TableMissingError('DocType', doctype)
-		return columns
+    def get_table_columns(self, doctype):
+        """Returns list of column names from given doctype."""
+        columns = self.get_db_table_columns("tab" + doctype)
+        if not columns:
+            raise self.TableMissingError("DocType", doctype)
+        return columns
 
-	def has_column(self, doctype, column):
-		"""Returns True if column exists in database."""
-		return column in self.get_table_columns(doctype)
+    def has_column(self, doctype, column):
+        """Returns True if column exists in database."""
+        return column in self.get_table_columns(doctype)
 
-	def get_column_type(self, doctype, column):
-		return self.sql('''SELECT column_type FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE table_name = 'tab{0}' AND column_name = '{1}' '''.format(doctype, column))[0][0]
+    def get_column_type(self, doctype, column):
+        return self.sql(
+            """SELECT column_type FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE table_name = 'tab{0}' AND column_name = '{1}' """.format(
+                doctype, column
+            )
+        )[0][0]
 
-	def has_index(self, table_name, index_name):
-		raise NotImplementedError
+    def has_index(self, table_name, index_name):
+        raise NotImplementedError
 
-	def add_index(self, doctype, fields, index_name=None):
-		raise NotImplementedError
+    def add_index(self, doctype, fields, index_name=None):
+        raise NotImplementedError
 
-	def add_unique(self, doctype, fields, constraint_name=None):
-		raise NotImplementedError
+    def add_unique(self, doctype, fields, constraint_name=None):
+        raise NotImplementedError
 
-	@staticmethod
-	def get_index_name(fields):
-		index_name = "_".join(fields) + "_index"
-		# remove index length if present e.g. (10) from index name
-		index_name = re.sub(r"\s*\([^)]+\)\s*", r"", index_name)
-		return index_name
+    @staticmethod
+    def get_index_name(fields):
+        index_name = "_".join(fields) + "_index"
+        # remove index length if present e.g. (10) from index name
+        index_name = re.sub(r"\s*\([^)]+\)\s*", r"", index_name)
+        return index_name
 
-	def get_system_setting(self, key):
-		def _load_system_settings():
-			return self.get_singles_dict("System Settings")
-		return frappe.cache().get_value("system_settings", _load_system_settings).get(key)
+    def get_system_setting(self, key):
+        def _load_system_settings():
+            return self.get_singles_dict("System Settings")
 
-	def close(self):
-		"""Close database connection."""
-		if self._conn:
-			# self._cursor.close()
-			self._conn.close()
-			self._cursor = None
-			self._conn = None
+        return (
+            frappe.cache().get_value("system_settings", _load_system_settings).get(key)
+        )
 
-	@staticmethod
-	def escape(s, percent=True):
-		"""Excape quotes and percent in given string."""
-		# implemented in specific class
-		raise NotImplementedError
+    def close(self):
+        """Close database connection."""
+        if self._conn:
+            # self._cursor.close()
+            self._conn.close()
+            self._cursor = None
+            self._conn = None
 
-	@staticmethod
-	def is_column_missing(e):
-		return frappe.db.is_missing_column(e)
+    @staticmethod
+    def escape(s, percent=True):
+        """Excape quotes and percent in given string."""
+        # implemented in specific class
+        raise NotImplementedError
 
-	def get_descendants(self, doctype, name):
-		'''Return descendants of the current record'''
-		node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))
-		if node_location_indexes:
-			lft, rgt = node_location_indexes
-			return self.sql_list('''select name from `tab{doctype}`
-				where lft > {lft} and rgt < {rgt}'''.format(doctype=doctype, lft=lft, rgt=rgt))
-		else:
-			# when document does not exist
-			return []
+    @staticmethod
+    def is_column_missing(e):
+        return frappe.db.is_missing_column(e)
 
-	def is_missing_table_or_column(self, e):
-		return self.is_missing_column(e) or self.is_missing_table(e)
+    def get_descendants(self, doctype, name):
+        """Return descendants of the current record"""
+        node_location_indexes = self.get_value(doctype, name, ("lft", "rgt"))
+        if node_location_indexes:
+            lft, rgt = node_location_indexes
+            return self.sql_list(
+                """select name from `tab{doctype}`
+				where lft > {lft} and rgt < {rgt}""".format(
+                    doctype=doctype, lft=lft, rgt=rgt
+                )
+            )
+        else:
+            # when document does not exist
+            return []
 
-	def multisql(self, sql_dict, values=(), **kwargs):
-		current_dialect = frappe.db.db_type or 'mariadb'
-		query = sql_dict.get(current_dialect)
-		return self.sql(query, values, **kwargs)
+    def is_missing_table_or_column(self, e):
+        return self.is_missing_column(e) or self.is_missing_table(e)
 
-	def delete(self, doctype: str, filters: Union[Dict, List] = None, debug=False, **kwargs):
-		"""Delete rows from a table in site which match the passed filters. This
-		does trigger DocType hooks. Simply runs a DELETE query in the database.
+    def multisql(self, sql_dict, values=(), **kwargs):
+        current_dialect = frappe.db.db_type or "mariadb"
+        query = sql_dict.get(current_dialect)
+        return self.sql(query, values, **kwargs)
 
-		Doctype name can be passed directly, it will be pre-pended with `tab`.
-		"""
-		values = ()
-		filters = filters or kwargs.get("conditions")
-		query = self.query.build_conditions(table=doctype, filters=filters).delete()
-		if "debug" not in kwargs:
-			kwargs["debug"] = debug
-		return self.sql(query, values, **kwargs)
+    def delete(
+        self, doctype: str, filters: Union[Dict, List] = None, debug=False, **kwargs
+    ):
+        """Delete rows from a table in site which match the passed filters. This
+        does trigger DocType hooks. Simply runs a DELETE query in the database.
 
-	def truncate(self, doctype: str):
-		"""Truncate a table in the database. This runs a DDL command `TRUNCATE TABLE`.
-		This cannot be rolled back.
+        Doctype name can be passed directly, it will be pre-pended with `tab`.
+        """
+        values = ()
+        filters = filters or kwargs.get("conditions")
+        query = self.query.build_conditions(table=doctype, filters=filters).delete()
+        if "debug" not in kwargs:
+            kwargs["debug"] = debug
+        return self.sql(query, values, **kwargs)
 
-		Doctype name can be passed directly, it will be pre-pended with `tab`.
-		"""
-		table = doctype if doctype.startswith("__") else f"tab{doctype}"
-		return self.sql_ddl(f"truncate `{table}`")
+    def truncate(self, doctype: str):
+        """Truncate a table in the database. This runs a DDL command `TRUNCATE TABLE`.
+        This cannot be rolled back.
 
-	def clear_table(self, doctype):
-		return self.truncate(doctype)
+        Doctype name can be passed directly, it will be pre-pended with `tab`.
+        """
+        table = doctype if doctype.startswith("__") else f"tab{doctype}"
+        return self.sql_ddl(f"truncate `{table}`")
 
-	def get_last_created(self, doctype):
-		last_record = self.get_all(doctype, ('creation'), limit=1, order_by='creation desc')
-		if last_record:
-			return get_datetime(last_record[0].creation)
-		else:
-			return None
+    def clear_table(self, doctype):
+        return self.truncate(doctype)
 
-	def log_touched_tables(self, query, values=None):
-		if values:
-			query = frappe.safe_decode(self._cursor.mogrify(query, values))
-		if query.strip().lower().split()[0] in ('insert', 'delete', 'update', 'alter', 'drop', 'rename'):
-			# single_word_regex is designed to match following patterns
-			# `tabXxx`, tabXxx and "tabXxx"
+    def get_last_created(self, doctype):
+        last_record = self.get_all(
+            doctype, ("creation"), limit=1, order_by="creation desc"
+        )
+        if last_record:
+            return get_datetime(last_record[0].creation)
+        else:
+            return None
 
-			# multi_word_regex is designed to match following patterns
-			# `tabXxx Xxx` and "tabXxx Xxx"
+    def log_touched_tables(self, query, values=None):
+        if values:
+            query = frappe.safe_decode(self._cursor.mogrify(query, values))
+        if query.strip().lower().split()[0] in (
+            "insert",
+            "delete",
+            "update",
+            "alter",
+            "drop",
+            "rename",
+        ):
+            # single_word_regex is designed to match following patterns
+            # `tabXxx`, tabXxx and "tabXxx"
 
-			# ([`"]?) Captures " or ` at the begining of the table name (if provided)
-			# \1 matches the first captured group (quote character) at the end of the table name
-			# multi word table name must have surrounding quotes.
+            # multi_word_regex is designed to match following patterns
+            # `tabXxx Xxx` and "tabXxx Xxx"
 
-			# (tab([A-Z]\w+)( [A-Z]\w+)*) Captures table names that start with "tab"
-			# and are continued with multiple words that start with a captital letter
-			# e.g. 'tabXxx' or 'tabXxx Xxx' or 'tabXxx Xxx Xxx' and so on
+            # ([`"]?) Captures " or ` at the begining of the table name (if provided)
+            # \1 matches the first captured group (quote character) at the end of the table name
+            # multi word table name must have surrounding quotes.
 
-			single_word_regex = r'([`"]?)(tab([A-Z]\w+))\1'
-			multi_word_regex = r'([`"])(tab([A-Z]\w+)( [A-Z]\w+)+)\1'
-			tables = []
-			for regex in (single_word_regex, multi_word_regex):
-				tables += [groups[1] for groups in re.findall(regex, query)]
+            # (tab([A-Z]\w+)( [A-Z]\w+)*) Captures table names that start with "tab"
+            # and are continued with multiple words that start with a captital letter
+            # e.g. 'tabXxx' or 'tabXxx Xxx' or 'tabXxx Xxx Xxx' and so on
 
-			if frappe.flags.touched_tables is None:
-				frappe.flags.touched_tables = set()
-			frappe.flags.touched_tables.update(tables)
+            single_word_regex = r'([`"]?)(tab([A-Z]\w+))\1'
+            multi_word_regex = r'([`"])(tab([A-Z]\w+)( [A-Z]\w+)+)\1'
+            tables = []
+            for regex in (single_word_regex, multi_word_regex):
+                tables += [groups[1] for groups in re.findall(regex, query)]
 
-	def bulk_insert(self, doctype, fields, values, ignore_duplicates=False):
-		"""
-			Insert multiple records at a time
+            if frappe.flags.touched_tables is None:
+                frappe.flags.touched_tables = set()
+            frappe.flags.touched_tables.update(tables)
 
-			:param doctype: Doctype name
-			:param fields: list of fields
-			:params values: list of list of values
-		"""
-		insert_list = []
-		fields = ", ".join("`"+field+"`" for field in fields)
+    def bulk_insert(self, doctype, fields, values, ignore_duplicates=False):
+        """
+        Insert multiple records at a time
 
-		for idx, value in enumerate(values):
-			insert_list.append(tuple(value))
-			if idx and (idx%10000 == 0 or idx < len(values)-1):
-				self.sql("""INSERT {ignore_duplicates} INTO `tab{doctype}` ({fields}) VALUES {values}""".format(
-						ignore_duplicates="IGNORE" if ignore_duplicates else "",
-						doctype=doctype,
-						fields=fields,
-						values=", ".join(['%s'] * len(insert_list))
-					), tuple(insert_list))
-				insert_list = []
+        :param doctype: Doctype name
+        :param fields: list of fields
+        :params values: list of list of values
+        """
+        insert_list = []
+        fields = ", ".join("`" + field + "`" for field in fields)
+
+        for idx, value in enumerate(values):
+            insert_list.append(tuple(value))
+            if idx and (idx % 10000 == 0 or idx < len(values) - 1):
+                self.sql(
+                    """INSERT {ignore_duplicates} INTO `tab{doctype}` ({fields}) VALUES {values}""".format(
+                        ignore_duplicates="IGNORE" if ignore_duplicates else "",
+                        doctype=doctype,
+                        fields=fields,
+                        values=", ".join(["%s"] * len(insert_list)),
+                    ),
+                    tuple(insert_list),
+                )
+                insert_list = []
 
 
 def enqueue_jobs_after_commit():
-	from frappe.utils.background_jobs import execute_job, get_queue
+    from frappe.utils.background_jobs import execute_job, get_queue
 
-	if frappe.flags.enqueue_after_commit and len(frappe.flags.enqueue_after_commit) > 0:
-		for job in frappe.flags.enqueue_after_commit:
-			q = get_queue(job.get("queue"), is_async=job.get("is_async"))
-			q.enqueue_call(execute_job, timeout=job.get("timeout"),
-							kwargs=job.get("queue_args"))
-		frappe.flags.enqueue_after_commit = []
+    if frappe.flags.enqueue_after_commit and len(frappe.flags.enqueue_after_commit) > 0:
+        for job in frappe.flags.enqueue_after_commit:
+            q = get_queue(job.get("queue"), is_async=job.get("is_async"))
+            q.enqueue_call(
+                execute_job, timeout=job.get("timeout"), kwargs=job.get("queue_args")
+            )
+        frappe.flags.enqueue_after_commit = []
+
 
 @contextmanager
 def savepoint(catch: Union[type, Tuple[type, ...]] = Exception):
-	""" Wrapper for wrapping blocks of DB operations in a savepoint.
+    """Wrapper for wrapping blocks of DB operations in a savepoint.
 
-		as contextmanager:
+    as contextmanager:
 
-		for doc in docs:
-			with savepoint(catch=DuplicateError):
-				doc.insert()
+    for doc in docs:
+            with savepoint(catch=DuplicateError):
+                    doc.insert()
 
-		as decorator (wraps FULL function call):
+    as decorator (wraps FULL function call):
 
-		@savepoint(catch=DuplicateError)
-		def process_doc(doc):
-			doc.insert()
-	"""
-	try:
-		savepoint = ''.join(random.sample(string.ascii_lowercase, 10))
-		frappe.db.savepoint(savepoint)
-		yield # control back to calling function
-	except catch:
-		frappe.db.rollback(save_point=savepoint)
-	else:
-		frappe.db.release_savepoint(savepoint)
+    @savepoint(catch=DuplicateError)
+    def process_doc(doc):
+            doc.insert()
+    """
+    try:
+        savepoint = "".join(random.sample(string.ascii_lowercase, 10))
+        frappe.db.savepoint(savepoint)
+        yield  # control back to calling function
+    except catch:
+        frappe.db.rollback(save_point=savepoint)
+    else:
+        frappe.db.release_savepoint(savepoint)

@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_import": 1,
+ "allow_rename": 1,
  "creation": "2022-01-10 17:29:51.672911",
  "description": "Represents a User in the system.",
  "doctype": "DocType",
@@ -695,6 +696,7 @@
   },
   {
    "group": "Logs",
+   "hidden": 1,
    "link_doctype": "Energy Point Log",
    "link_fieldname": "user"
   },
@@ -710,6 +712,7 @@
   },
   {
    "group": "Settings",
+   "hidden": 1,
    "link_doctype": "Document Follow",
    "link_fieldname": "user"
   },
@@ -729,7 +732,7 @@
    "link_fieldname": "user"
   }
  ],
- "modified": "2023-09-08 15:21:25.844821",
+ "modified": "2023-09-26 12:22:54.034278",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
@@ -758,7 +761,7 @@
  ],
  "quick_entry": 1,
  "route": "user",
- "search_fields": "full_name",
+ "search_fields": "full_name,phone",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

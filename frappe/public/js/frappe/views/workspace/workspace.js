@@ -354,8 +354,8 @@ frappe.views.Workspace = class Workspace {
 				this.make_blocks_sortable();
 			});
 		});
-
-		this.page.add_inner_button(__("Create Workspace"), () => {
+		if(frappe.user_roles.includes('System Manager'))
+			this.page.add_inner_button(__("Create Workspace"), () => {
 			this.initialize_new_page();
 		});
 	}

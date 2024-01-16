@@ -732,7 +732,7 @@
    "link_fieldname": "user"
   }
  ],
- "modified": "2023-09-26 12:22:54.034278",
+ "modified": "2024-01-04 16:19:05.321251",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
@@ -757,11 +757,21 @@
    "read": 1,
    "role": "System Manager",
    "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1
   }
  ],
  "quick_entry": 1,
  "route": "user",
- "search_fields": "full_name,phone",
+ "search_fields": "phone,full_name",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

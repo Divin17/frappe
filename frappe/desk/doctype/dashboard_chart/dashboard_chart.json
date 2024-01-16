@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "field:chart_name",
- "creation": "2019-01-10 12:28:06.282875",
+ "creation": "2023-05-12 14:28:45.994078",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -280,10 +280,11 @@
   }
  ],
  "links": [],
- "modified": "2021-11-09 17:18:11.456145",
+ "modified": "2024-01-12 13:16:05.789409",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Dashboard Chart",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -309,19 +310,10 @@
    "role": "Dashboard Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "All",
-   "share": 1
   }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

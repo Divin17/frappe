@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_import": 1,
- "creation": "2017-10-05 11:10:38.780133",
+ "creation": "2023-05-12 14:28:49.311465",
  "description": "Keep track of all update feeds",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -13,6 +13,7 @@
   "column_break_5",
   "additional_info",
   "communication_date",
+  "ip_address",
   "column_break_7",
   "operation",
   "status",
@@ -149,12 +150,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Full Name"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-comment",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-10-25 11:43:57.504565",
+ "modified": "2024-02-22 17:34:18.296198",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Activity Log",
@@ -181,6 +188,7 @@
  "search_fields": "subject",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "subject",
  "track_seen": 1
 }

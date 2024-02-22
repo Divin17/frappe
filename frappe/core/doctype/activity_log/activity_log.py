@@ -39,6 +39,7 @@ def add_authentication_log(subject, user, operation="Login", status="Success"):
 		"user": user,
 		"status": status,
 		"subject": subject,
+		"ip_address": frappe.local.request_ip,
 		"operation": operation,
 	}).insert(ignore_permissions=True, ignore_links=True)
 

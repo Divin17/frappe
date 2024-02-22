@@ -29,7 +29,7 @@ class ActivityLog(Document):
 			self.status = "Linked"
 	def set_ip_address(self):
 		if self.operation in ("Login", "Logout"):
-			self.ip_address = frappe.get_request_header('X-Forwarded-For')
+			self.ip_address = frappe.get_request_header('X-Real-IP')
 
 def on_doctype_update():
 	"""Add indexes in `tabActivity Log`"""

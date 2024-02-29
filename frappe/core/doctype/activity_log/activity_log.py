@@ -12,24 +12,28 @@ from frappe.query_builder.functions import Now
 from pypika.terms import PseudoColumn
 
 class ActivityLog(Document):
-	def before_insert(self):
-		self.full_name = get_fullname(self.user)
-		self.date = now()
+    def before_insert(self):
+        self.full_name = get_fullname(self.user)
+        self.date = now()
 
-	def validate(self):
-		self.set_status()
-		set_timeline_doc(self)
-		self.set_ip_address()
+    def validate(self):
+        self.set_status()
+        set_timeline_doc(self)
+        self.set_ip_address()
 
-	def set_status(self):
-		if not self.is_new():
-			return
+    def set_status(self):
+        if not self.is_new():
+            return
 
-		if self.reference_doctype and self.reference_name:
-			self.status = "Linked"
-	def set_ip_address(self):
-		if self.operation in ("Login", "Logout"):
-			self.ip_address = frappe.get_request_header('X-Real-IP')
+        if self.reference_doctype and self.reference_name:
+            self.status = "Linked"
+
+    def set_ip_address(self):
+        if self.operation in ("Login", "Logout") and frappe.get_request_header(
+            "X-Real-IP"
+        ):
+            self.ip_address = frappe.get_request_header("X-Real-IP")
+
 
 def on_doctype_update():
 	"""Add indexes in `tabActivity Log`"""

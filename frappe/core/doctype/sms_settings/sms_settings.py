@@ -52,13 +52,16 @@ def get_contact_number(contact_name, ref_doctype, ref_name):
 def send_sms(receiver_list, msg, sender_name="", success_msg=True):
     import json
 
+    print("Hello --->", receiver_list)
     if isinstance(receiver_list, str):
         receiver_list = json.loads(receiver_list)
         if not isinstance(receiver_list, list):
             receiver_list = [receiver_list]
 
     receiver_list = validate_receiver_nos(receiver_list)
-
+    print(
+        "------------------------Print receiver list-------------------", receiver_list
+    )
     arg = {
         "receiver_list": receiver_list,
         "message": frappe.safe_decode(msg).encode("utf-8"),
@@ -84,7 +87,8 @@ def send_via_gateway(arg):
 
     success_list = []
     for d in arg.get("receiver_list"):
-        args[ss.receiver_parameter] = [d]
+        args[ss.receiver_parameter] = d
+        print(".................arguments...........", args)
         status = send_request(ss.sms_gateway_url, args, headers, ss.use_post, use_json)
 
         if 200 <= status < 300:
@@ -129,9 +133,11 @@ def send_request(gateway_url, params, headers=None, use_post=False, use_json=Fal
         kwargs["params"] = params
 
     if use_post:
+        print("Use this arguments", kwargs)
         response = requests.post(gateway_url, **kwargs)
     else:
         response = requests.get(gateway_url, **kwargs)
+    print("This is the sms response ------->", response.json())
     response.raise_for_status()
     return response.status_code
 

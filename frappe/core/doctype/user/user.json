@@ -41,6 +41,7 @@
   "mobile_no",
   "change_password",
   "new_password",
+  "ussd_pin",
   "logout_all_sessions",
   "reset_password_key",
   "last_reset_password_key_generated_on",
@@ -668,6 +669,12 @@
    "fieldname": "follow_assigned_documents",
    "fieldtype": "Check",
    "label": "Auto follow documents that are assigned to you"
+  },
+  {
+   "fieldname": "ussd_pin",
+   "fieldtype": "Password",
+   "label": "USSD PIN",
+   "no_copy": 1
   }
  ],
  "icon": "fa fa-user",
@@ -732,7 +739,7 @@
    "link_fieldname": "user"
   }
  ],
- "modified": "2024-01-04 16:19:05.321251",
+ "modified": "2024-03-15 13:26:15.824873",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",

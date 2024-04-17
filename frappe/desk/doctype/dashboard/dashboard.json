@@ -67,25 +67,13 @@
   }
  ],
  "links": [],
- "modified": "2024-01-12 13:16:44.612573",
+ "modified": "2024-04-07 14:20:46.195106",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Dashboard",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
   {
    "create": 1,
    "delete": 1,

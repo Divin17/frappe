@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Settings</b></span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"System Settings\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Print Settings\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Website Settings\",\"col\":3}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports & Masters</b></span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Data\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Email / Notifications\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Website\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Core\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Printing\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Workflow\",\"col\":4}}]",
- "creation": "2020-03-02 15:09:40.527211",
+ "creation": "2023-05-12 14:28:54.881226",
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -367,7 +367,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-01-13 17:49:59.586909",
+ "modified": "2024-04-05 11:07:17.032424",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Settings",
@@ -376,7 +376,7 @@
  "public": 1,
  "restrict_to_domain": "",
  "roles": [],
- "sequence_id": 29.0,
+ "sequence_id": 12.0,
  "shortcuts": [
   {
    "icon": "setting",

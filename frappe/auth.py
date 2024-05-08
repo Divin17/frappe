@@ -141,6 +141,7 @@ class LoginManager:
 			return False
 
 		if should_run_2fa(self.user):
+			print("Checking 2FA......")
 			authenticate_for_2factor(self.user)
 			if not confirm_otp_token(self):
 				return False

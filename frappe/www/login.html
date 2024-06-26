@@ -38,7 +38,7 @@
 	</div>
 
 	<p class="forgot-password-message">
-		<a href="/user/reset-password">Forgot Password??</a></p>
+		<a href="/user/reset-password?action=Reset">Forgot Password??</a></p>
 </div>
 
 <div class="page-card-actions">
@@ -49,7 +49,7 @@
 	<button class="btn btn-sm btn-default btn-block btn-login btn-ldap-login">
 		{{ _("Login with LDAP") }}</button>
 	{% endif %}
-	<small>Not registered?&nbsp;<a href="/user/register">Register</a></small>
+	<small>Not registered?&nbsp;<a href="/user/register">Register</a> | <a href="/user/reset-password?action=Create">Create Password</a></small>
 </div>
 {% endmacro %}
 

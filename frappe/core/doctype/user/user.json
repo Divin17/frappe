@@ -121,7 +121,7 @@
    "label": "First Name",
    "oldfieldname": "first_name",
    "oldfieldtype": "Data",
-   "read_only_depends_on": "eval:(!frappe.user_roles.includes(\"Investment Manager\") || !frappe.user_roles.includes('System Manager')) && !doc.__islocal",
+   "permlevel": 2,
    "reqd": 1
   },
   {
@@ -130,7 +130,7 @@
    "label": "Middle Name (Optional)",
    "oldfieldname": "middle_name",
    "oldfieldtype": "Data",
-   "read_only_depends_on": "eval:(!frappe.user_roles.includes(\"Investment Manager\") || !frappe.user_roles.includes('System Manager')) && !doc.__islocal"
+   "permlevel": 2
   },
   {
    "bold": 1,
@@ -139,7 +139,7 @@
    "label": "Last Name",
    "oldfieldname": "last_name",
    "oldfieldtype": "Data",
-   "read_only_depends_on": "eval:(!frappe.user_roles.includes(\"Investment Manager\") || !frappe.user_roles.includes('System Manager')) && !doc.__islocal"
+   "permlevel": 2
   },
   {
    "fieldname": "full_name",
@@ -254,7 +254,7 @@
    "fieldtype": "Data",
    "label": "Phone",
    "options": "Phone",
-   "read_only_depends_on": "eval:(!frappe.user_roles.includes(\"Investment Manager\") || !frappe.user_roles.includes('System Manager')) && !doc.__islocal",
+   "permlevel": 2,
    "reqd": 1
   },
   {
@@ -262,7 +262,7 @@
    "fieldtype": "Data",
    "label": "Mobile No",
    "options": "Phone",
-   "read_only_depends_on": "eval:(!frappe.user_roles.includes(\"Investment Manager\") || !frappe.user_roles.includes('System Manager')) && !doc.__islocal",
+   "permlevel": 2,
    "reqd": 1
   },
   {
@@ -767,6 +767,18 @@
    "write": 1
   },
   {
+   "permlevel": 2,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "permlevel": 2,
+   "read": 1,
+   "role": "Investment Manager",
+   "write": 1
+  },
+  {
    "create": 1,
    "email": 1,
    "export": 1,
@@ -775,6 +787,11 @@
    "report": 1,
    "role": "HR Manager",
    "share": 1
+  },
+  {
+   "permlevel": 2,
+   "read": 1,
+   "role": "HR Manager"
   },
   {
    "create": 1,
@@ -788,6 +805,11 @@
    "select": 1,
    "share": 1,
    "write": 1
+  },
+  {
+   "permlevel": 2,
+   "read": 1,
+   "role": "IT support"
   }
  ],
  "quick_entry": 1,

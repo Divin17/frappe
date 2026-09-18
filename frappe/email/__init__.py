@@ -41,6 +41,7 @@ def get_contact_list(txt, page_length=20):
 def get_system_managers():
 	return frappe.db.sql_list("""select parent FROM `tabHas Role`
 		WHERE role='System Manager'
+		AND parenttype='User'
 		AND parent!='Administrator'
 		AND parent IN (SELECT email FROM tabUser WHERE enabled=1)""")
 

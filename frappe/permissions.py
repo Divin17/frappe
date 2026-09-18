@@ -351,8 +351,15 @@ def get_roles(user=None, with_standard=True):
 			return frappe.get_all("Role", pluck="name") # return all available roles
 		else:
 			table = DocType("Has Role")
+			# parenttype is required: Has Role is shared by User, Report, Page,
+			# Workspace and Role Profile. Without it, a user whose name matches
+			# any of those (case-insensitively, under MariaDB's collation)
+			# inherited that record's roles -- e.g. user "salary" gained System
+			# Manager from Report "Salary".
 			roles = frappe.qb.from_(table).where(
-				(table.parent == user) & (table.role.notin(["All", "Guest"]))
+				(table.parenttype == "User")
+				& (table.parent == user)
+				& (table.role.notin(["All", "Guest"]))
 			).select(table.role).run(pluck=True)
 			return roles + ['All', 'Guest']
 

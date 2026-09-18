@@ -315,6 +315,7 @@ class User(Document):
             .from_(user_role_doctype)
             .select(user_doctype.name)
             .where(user_role_doctype.role == "System Manager")
+            .where(user_role_doctype.parenttype == "User")
             .where(user_doctype.docstatus < 2)
             .where(user_doctype.enabled == 1)
             .where(user_role_doctype.parent == user_doctype.name)

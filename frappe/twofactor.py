@@ -53,7 +53,7 @@ def two_factor_is_enabled(user=None):
 def should_run_2fa(user):
     """Check if 2fa should run."""
     user_roles = frappe.db.get_values(
-        "Has Role", filters={"parent": user}, fieldname=["role"]
+        "Has Role", filters={"parent": user, "parenttype": "User"}, fieldname=["role"]
     )
     if user_roles and any(role[0] == "Employee" for role in user_roles):
         return two_factor_is_enabled(user=user)

@@ -76,7 +76,7 @@ class Report(Document):
 		from frappe.utils import has_common
 
 		allowed = [d.role for d in frappe.get_all("Has Role", fields=["role"],
-			filters={"parent": self.name})]
+			filters={"parent": self.name, "parenttype": "Report"})]
 
 		custom_roles = get_custom_allowed_roles('report', self.name)
 		allowed.extend(custom_roles)

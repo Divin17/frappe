@@ -60,7 +60,7 @@ class Workspace:
 		"""Returns true if Has Role is not set or the user is allowed."""
 		from frappe.utils import has_common
 
-		allowed = [d.role for d in frappe.get_all("Has Role", fields=["role"], filters={"parent": self.doc.name})]
+		allowed = [d.role for d in frappe.get_all("Has Role", fields=["role"], filters={"parent": self.doc.name, "parenttype": "Workspace"})]
 
 		custom_roles = get_custom_allowed_roles('page', self.doc.name)
 		allowed.extend(custom_roles)

@@ -538,3 +538,31 @@ def reset_otp_secret(user):
         )
     else:
         return frappe.throw(_("OTP secret can only be reset by the Administrator."))
+
+
+# --- RNIT ---------------------------------------------------------------
+# Two-step login here is per investor: whether it is asked for at all, and
+# which of email / SMS / authenticator app sends the code, are stored per
+# user rather than read from System Settings and the roles alone. The
+# functions above are replaced with versions that answer per user
+# (rnit_app/investment/two_factor_login.py).
+#
+# It is done from here, in frappe, because nothing in an app runs early
+# enough: the login happens inside init_request -> frappe.auth.HTTPRequest
+# -> LoginManager, before hooks, before auth_hooks and before the request
+# handler, so an app module is not imported yet when the decision is made.
+#
+# At the bottom of the module on purpose: the functions it replaces must
+# exist first, and frappe.auth imports this module before binding their
+# names, so it binds the replacements.
+#
+# KEEP THIS AFTER A FRAPPE UPGRADE. Without it, two-step login silently
+# stops asking anyone for a code.
+try:
+    from rnit_app.investment.two_factor_login import apply as _rnit_apply_two_factor
+
+    _rnit_apply_two_factor()
+except Exception:
+    # A bench without rnit_app installed, or mid-install: frappe's own
+    # behaviour stands.
+    pass
